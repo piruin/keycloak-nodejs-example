@@ -794,25 +794,25 @@
       "allowRemoteResourceManagement" : false,
       "policyEnforcementMode" : "ENFORCING",
       "resources" : [ {
-        "name" : "res:customer",
+        "name" : "customer",
         "scopes" : [ {
-          "name" : "scopes:view"
+          "name" : "view"
         }, {
-          "name" : "scopes:create"
+          "name" : "create"
         } ]
       }, {
-        "name" : "res:campaign",
+        "name" : "campaign",
         "scopes" : [ {
-          "name" : "scopes:view"
+          "name" : "view"
         }, {
-          "name" : "scopes:create"
+          "name" : "create"
         } ]
       }, {
-        "name" : "res:report",
+        "name" : "report",
         "scopes" : [ {
-          "name" : "scopes:view"
+          "name" : "view"
         }, {
-          "name" : "scopes:create"
+          "name" : "create"
         } ]
       } ],
       "policies" : [ {
@@ -862,8 +862,8 @@
         "logic" : "POSITIVE",
         "decisionStrategy" : "AFFIRMATIVE",
         "config" : {
-          "resources" : "[\"res:customer\"]",
-          "scopes" : "[\"scopes:create\"]",
+          "resources" : "[\"customer\"]",
+          "scopes" : "[\"create\"]",
           "applyPolicies" : "[\"Admin\"]"
         }
       }, {
@@ -872,8 +872,8 @@
         "logic" : "POSITIVE",
         "decisionStrategy" : "AFFIRMATIVE",
         "config" : {
-          "resources" : "[\"res:campaign\"]",
-          "scopes" : "[\"scopes:create\"]",
+          "resources" : "[\"campaign\"]",
+          "scopes" : "[\"create\"]",
           "applyPolicies" : "[\"Admin\",\"Advertiser\"]"
         }
       }, {
@@ -882,8 +882,8 @@
         "logic" : "POSITIVE",
         "decisionStrategy" : "AFFIRMATIVE",
         "config" : {
-          "resources" : "[\"res:campaign\"]",
-          "scopes" : "[\"scopes:view\"]",
+          "resources" : "[\"campaign\"]",
+          "scopes" : "[\"view\"]",
           "applyPolicies" : "[\"Admin or Advertiser or Analyst\"]"
         }
       }, {
@@ -892,8 +892,8 @@
         "logic" : "POSITIVE",
         "decisionStrategy" : "AFFIRMATIVE",
         "config" : {
-          "resources" : "[\"res:customer\"]",
-          "scopes" : "[\"scopes:view\"]",
+          "resources" : "[\"customer\"]",
+          "scopes" : "[\"view\"]",
           "applyPolicies" : "[\"Admin or Advertiser or Analyst\"]"
         }
       }, {
@@ -902,8 +902,8 @@
         "logic" : "POSITIVE",
         "decisionStrategy" : "AFFIRMATIVE",
         "config" : {
-          "resources" : "[\"res:report\"]",
-          "scopes" : "[\"scopes:view\"]",
+          "resources" : "[\"report\"]",
+          "scopes" : "[\"view\"]",
           "applyPolicies" : "[\"Admin or Advertiser or Analyst\"]"
         }
       }, {
@@ -912,15 +912,15 @@
         "logic" : "POSITIVE",
         "decisionStrategy" : "AFFIRMATIVE",
         "config" : {
-          "resources" : "[\"res:report\"]",
-          "scopes" : "[\"scopes:create\"]",
+          "resources" : "[\"report\"]",
+          "scopes" : "[\"create\"]",
           "applyPolicies" : "[\"Analyst\"]"
         }
       } ],
       "scopes" : [ {
-        "name" : "scopes:view"
+        "name" : "view"
       }, {
-        "name" : "scopes:create"
+        "name" : "create"
       } ]
     }
   }, {

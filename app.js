@@ -1,137 +1,108 @@
-'use strict';
+var express = require('express');
+var session = require('express-session');
+var bodyParser = require('body-parser');
+var Keycloak = require('keycloak-connect');
+var cors = require('cors');
 
-const Express = require('express');
-const path = require('path');
-const hogan = require('hogan-express');
-const cookieParser = require('cookie-parser');
+var app = express();
+app.use(bodyParser.json());
+app.use(cors());
 
-const Permissions = require('./lib/permissions');
-const KeyCloakService = require('./lib/keyCloakService');
-const AdminClient = require('./lib/adminClient');
+var memoryStore = new session.MemoryStore();
 
-/**
- * URL patterns for permissions. URL patterns documentation https://github.com/snd/url-pattern.
- */
-const PERMISSIONS = new Permissions([
-    ['/customers', 'post', 'res:customer', 'scopes:create'],
-    ['/customers(*)', 'get', 'res:customer', 'scopes:view'],
-    ['/campaigns', 'post', 'res:campaign', 'scopes:create'],
-    ['/campaigns(*)', 'get', 'res:campaign', 'scopes:view'],
-    ['/reports', 'post', 'res:report', 'scopes:create'],
-    ['/reports(*)', 'get', 'res:report', 'scopes:view']
-]).notProtect(
-    '/favicon.ico', // just to not log requests
-    '/login(*)',
-    '/accessDenied',
-    '/adminClient',
-    '/adminApi(*)',
+app.use(session({
+  secret: 'some very long secret',
+  resave: false,
+  saveUninitialized: true,
+  store: memoryStore
+}));
 
-    /**
-     * It is protected because of we need an access token. Better to move it to the protected area.
-     */
-    '/permissions',
-    '/checkPermission'
-);
-
-let app = Express();
-
-// hogan-express configuration to render html
-app.set('view engine', 'html');
-app.engine('html', hogan);
-
-let keyCloak = new KeyCloakService(PERMISSIONS);
-
-let adminClient = new AdminClient({
-    realm: 'CAMPAIGN_REALM',
-    serverUrl: 'http://localhost:8080',
-    resource: 'CAMPAIGN_CLIENT',
-    adminLogin: 'admin',
-    adminPassword: 'admin'
+var keycloak = new Keycloak({
+  store: memoryStore
 });
 
-configureMiddleware();
-configureRoutes();
+app.use(keycloak.middleware({
+  logout: '/logout',
+  admin: '/'
+}));
 
-const server = app.listen(3000, function () {
-    const port = server.address().port;
-    console.log('App listening at port %s', port);
+
+// # Public resource
+
+app.get('/public', function (req, res) {
+  res.json({message: 'public'});
 });
 
-function configureMiddleware() {
-    app.use(Express.static(path.join(__dirname, 'static')));
+// # Simple authentication
+//
+// To enforce that a user must be authenticated before accessing a resource,
+// simply use a no-argument version of keycloak.protect():
+app.get('/user', keycloak.protect(), function (req, res){
+  res.json({message: 'user'});
+});
 
-    // for a Keycloak token
-    app.use(cookieParser());
+// # Role-Based Authorization
+//
+// secure a resource with a realm roles
+app.get('/roles/admin', keycloak.protect('realm:admin'), function (req, res) {
+  res.json({message: 'admin'});
+});
 
-    // protection middleware is configured here
-    app.use(keyCloak.middleware('/logout'));
-}
+app.get('/roles/advertiser', keycloak.protect('realm:customer-advertiser'), function (req, res) {
+  res.json({message: 'advertiser'});
+});
 
-function configureRoutes() {
-    let router = Express.Router();
-    app.use('/', router);
+app.get('/roles/analyst', keycloak.protect('realm:customer-analyst'), function (req, res) {
+  res.json({message: 'analyst'});
+});
 
-    // example urls to check protection
-    app.use('/campaigns', showUrl);
-    app.use('/customers', showUrl);
-    app.use('/upload', showUrl);
-    app.use('/optimizer', showUrl);
-    app.use('/reports', showUrl);
-    app.use('/targets', showUrl);
+// many role can access reousece
+app.get('/roles/adminOrAdvertiser', keycloak.protect(['realm:admin', 'realm:customer-advertiser']), function (req, res) {
+  res.json({message: 'admin, advertiser'});
+});
 
-    applicationRoutes();
+// secure a resource with current client roles
+app.get('/roles/manager', keycloak.protect('manager'), function (req, res) {
+  res.json({message: 'manager'});
+});
 
-    app.get('*', (req, res) => res.sendFile(path.join(__dirname, '/static/index.html')));
-}
+// # Resource-Based Authorization
+//
+// Use keycloak.enforcer to control the access of resource with 'resource[:scope]' format
+// example for 'customer:view' for resource 'customer' with 'view' scope
+app.get('/customers', keycloak.enforcer('customer:view'), function (req, res) {
+  res.json({message: 'customer'});
+});
 
-// this routes are used by this application
-function applicationRoutes() {
-    app.get('/login', login);
+app.post('/customers', keycloak.enforcer('customer:create'), function (req, res) {
+  res.status(201).json({message: 'customer created'})
+})
 
-    app.get('/adminClient', (req, res) => renderAdminClient(res, 'we will have result here'));
+app.get('/campaigns', keycloak.enforcer('campaign:view'), function (req, res) {
+  res.json({message: 'campaign'});
+});
 
-    app.get('/adminApi', (req, res) => {
-        let render = renderAdminClient.bind(null, res);
-        adminClient[req.query.api]()
-            .then(render)
-            .catch(render);
-    });
+app.post('/campaigns', keycloak.enforcer('campaign:create'), function (req, res) {
+  res.status(201).json({message: 'campaign created'})
+})
 
-    //get all permissions
-    app.get('/permissions', (req, res) => {
-        keyCloak.getAllPermissions(req)
-            .then(json => res.json(json))
-            .catch(error => res.end('error ' + error));
-    });
+app.get('/reports', keycloak.enforcer('report:view'), function (req, res) {
+  res.json({message: 'report'});
+});
 
-    // check a specified permission
-    app.get('/checkPermission', (req, res) => {
-        keyCloak.checkPermission(req, 'res:customer', 'scopes:create')
-            .then(() => res.end('permission granted'))
-            .catch(error => res.end('error ' + error));
-    });
-}
+app.post('/reports', keycloak.enforcer('report:create'), function (req, res) {
+  res.status(201).json({message: 'report created'})
+})
 
-function login(req, res) {
-    keyCloak.loginUser(req.query.login, req.query.password, req, res).then(grant => {
-        // console.log(grant.__raw);
-        res.render('loginSuccess', {
-            userLogin: req.query.login
-        });
-    }).catch(error => {
-        // TODO put login failed code here (we can return 401 code)
-        console.error(error);
-        res.end('Login error: ' + error);
-    });
-}
+// require more than one permssion to access resource
+app.put('/customers/:id/reports', keycloak.enforcer(['customer:view','report:create']), function (req, res) {
+  res.status(201).json({message: 'customer-report created'})
+})
 
-function renderAdminClient(res, result) {
-    res.render('adminClient', {
-        result: JSON.stringify(result, null, 4)
-    });
-}
+app.use('*', function (req, res) {
+  res.status(404).json({code: '404', message: 'Not found'})
+});
 
-function showUrl(req, res) {
-    res.end('<a href="javascript: window.history.back()">back</a> Access acquired to ' + req.originalUrl);
-}
-
+app.listen(3000, function () {
+  console.log('Started at port 3000');
+});

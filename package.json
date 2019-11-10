@@ -8,20 +8,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/v-ladynev/keycloack-nodejs-example.git"
+    "url": "https://github.com/piruin/keycloak-nodejs-example"
   },
   "license": "Apache-2.0",
   "author": "V.Ladynev",
+  "contributors": [
+    "Piruin Panichphol (https://github.com/piruin)"
+  ],
   "dependencies": {
-    "core-js": "^2.4.1",
-    "express": "*",
-    "hogan-express": "*",
-    "request-promise-native": "^1.0.5",
-    "jsonwebtoken": "^7.3.0",
-    "keycloak-admin-client": "0.12.0",
-    "keycloak-connect": "3.3.0-cr.2",
-    "keycloak-request-token": "^0.1.0",
-    "cookie-parser": "*",
-    "url-pattern": "^1.0.3"
+    "body-parser": "^1.13.3",
+    "cors": "^2.8.1",
+    "express": "^4.13.3",
+    "express-session": "^1.14.2",
+    "keycloak-connect": "7.0.1"
   }
 }
