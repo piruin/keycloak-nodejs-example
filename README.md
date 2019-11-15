@@ -31,7 +31,7 @@ based on permissions are configured using Keycloak.
 | /reports   | POST   | report-create   | report   | create | customer-analyst                             |
 | /reports   | GET    | report-view     | report   | view   | admin, customer-advertiser, customer-analyst |
 
->> Note: this configure has removed res: and scope: prefix of resource name and scope name from original design at https://github.com/v-ladynev/keycloak-nodejs-example
+> Note: this configure has removed res: and scope: prefix of resource name and scope name from original design at https://github.com/v-ladynev/keycloak-nodejs-example
 
 The application will use a combination of _(resource, scope)_ to check a permission.
 We will configure Keycloak to use polices are based on roles.
@@ -185,11 +185,23 @@ with downloaded `keycloak.json`.
 
 4. `npm start` to run node.js application
 
-5. import [postman collection](https://github.com/piruin/keycloak-nodejs-example/blob/master/postman/CAMPAIGN_REALM.postman_collection.json)
+5. Access this application at http://localhost:3000 on web browser or use prepared [*Postman*](https://www.getpostman.com/) collection
 
-### Original content
+### Using prepared Postman collection
 
-This folked example project focus only about [**Node.Js Adapter**](https://www.keycloak.org/docs/latest/securing_apps/index.html#_nodejs_adapter) _('nodejs-connector')_ and how it corresponding with _Role_ _Resource_ and _Scope_ on KeyCloak. Therefor, Some original content was removed. Such as,
+1. import [Postman Collection](https://github.com/piruin/keycloak-nodejs-example/blob/master/postman/CAMPAIGN_REALM.postman_collection.json) and then
+
+2. import [Postman Environment](https://github.com/piruin/keycloak-nodejs-example/blob/master/postman/CAMPAIGN_REALM.postman_environment.json) and configure following variable
+    * `auth_url` base url of your KeyCloak server, ex. http://localhost:8080
+    * `client_secret` KeyCloak generated `secret` at `Clients -> CAMPAIGN_CLIENT -> Credentials`
+
+3. Use one of request in `Login` folder of `CAMPAIGN_REALM` collection
+
+4. Try request in both `Role-Base` and `Resource-Base` and see how KeyCloak's magic work!
+
+## Original content
+
+This folked example project focus only about KeyCloak [**Node.Js Adapter**](https://www.keycloak.org/docs/latest/securing_apps/index.html#_nodejs_adapter) _('keycloak-connect')_ and how it corresponding with _Role_, _Resource_ and _Scope_ on KeyCloak. Therefor, Some original content was removed. Such as,
 
 - [Keycloak docker image](https://github.com/v-ladynev/keycloak-nodejs-example#keycloak-docker-image)
 - [Examples of using Admin REST API and Custom Login](https://github.com/v-ladynev/keycloak-nodejs-example#examples-of-using-admin-rest-api-and-custom-login)
