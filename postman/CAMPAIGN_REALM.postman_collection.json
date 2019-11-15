@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a9dd7e20-dfa2-453a-9a68-c9d6e78adbb3",
+		"_postman_id": "f2eb4bf8-d4cf-44b9-83d1-5db0383395f6",
 		"name": "CAMPAIGN_REALM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -11,21 +11,6 @@
 				{
 					"name": "Login as Admin",
 					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "6d979be5-cb81-4d5c-9fc7-45d1b0c7a75e",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "CAMPAIGN_CLIENT",
-									"type": "string"
-								}
-							]
-						},
 						"method": "POST",
 						"header": [
 							{
@@ -40,7 +25,7 @@
 							"urlencoded": [
 								{
 									"key": "client_id",
-									"value": "CAMPAIGN_CLIENT",
+									"value": "{{client_id}}",
 									"type": "text"
 								},
 								{
@@ -61,18 +46,14 @@
 							]
 						},
 						"url": {
-							"raw": "https://auth.hii.in.th/auth/realms/CAMPAIGN_REALM/protocol/openid-connect/token",
-							"protocol": "https",
+							"raw": "{{auth_url}}/auth/realms/{{realm}}/protocol/openid-connect/token",
 							"host": [
-								"auth",
-								"hii",
-								"in",
-								"th"
+								"{{auth_url}}"
 							],
 							"path": [
 								"auth",
 								"realms",
-								"CAMPAIGN_REALM",
+								"{{realm}}",
 								"protocol",
 								"openid-connect",
 								"token"
@@ -100,21 +81,6 @@
 						}
 					],
 					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "6d979be5-cb81-4d5c-9fc7-45d1b0c7a75e",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "CAMPAIGN_CLIENT",
-									"type": "string"
-								}
-							]
-						},
 						"method": "POST",
 						"header": [
 							{
@@ -129,7 +95,7 @@
 							"urlencoded": [
 								{
 									"key": "client_id",
-									"value": "CAMPAIGN_CLIENT",
+									"value": "{{client_id}}",
 									"type": "text"
 								},
 								{
@@ -150,18 +116,14 @@
 							]
 						},
 						"url": {
-							"raw": "https://auth.hii.in.th/auth/realms/CAMPAIGN_REALM/protocol/openid-connect/token",
-							"protocol": "https",
+							"raw": "{{auth_url}}/auth/realms/{{realm}}/protocol/openid-connect/token",
 							"host": [
-								"auth",
-								"hii",
-								"in",
-								"th"
+								"{{auth_url}}"
 							],
 							"path": [
 								"auth",
 								"realms",
-								"CAMPAIGN_REALM",
+								"{{realm}}",
 								"protocol",
 								"openid-connect",
 								"token"
@@ -178,10 +140,6 @@
 							"script": {
 								"id": "24ced923-e3c1-4f23-9550-f998b801d778",
 								"exec": [
-									"pm.test(\"Get Access Token\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.environment.set(\"access_token\", jsonData.access_token);",
-									"});",
 									""
 								],
 								"type": "text/javascript"
@@ -189,21 +147,6 @@
 						}
 					],
 					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "6d979be5-cb81-4d5c-9fc7-45d1b0c7a75e",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "CAMPAIGN_CLIENT",
-									"type": "string"
-								}
-							]
-						},
 						"method": "POST",
 						"header": [
 							{
@@ -218,7 +161,7 @@
 							"urlencoded": [
 								{
 									"key": "client_id",
-									"value": "CAMPAIGN_CLIENT",
+									"value": "{{client_id}}",
 									"type": "text"
 								},
 								{
@@ -239,18 +182,14 @@
 							]
 						},
 						"url": {
-							"raw": "https://auth.hii.in.th/auth/realms/CAMPAIGN_REALM/protocol/openid-connect/token",
-							"protocol": "https",
+							"raw": "{{auth_url}}/auth/realms/{{realm}}/protocol/openid-connect/token",
 							"host": [
-								"auth",
-								"hii",
-								"in",
-								"th"
+								"{{auth_url}}"
 							],
 							"path": [
 								"auth",
 								"realms",
-								"CAMPAIGN_REALM",
+								"{{realm}}",
 								"protocol",
 								"openid-connect",
 								"token"
@@ -259,7 +198,53 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"auth": {
+				"type": "basic",
+				"basic": [
+					{
+						"key": "password",
+						"value": "{{client_secret}}",
+						"type": "string"
+					},
+					{
+						"key": "username",
+						"value": "{{client_id}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "74e48a14-57cc-42fb-98cb-662c237e1677",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "6a25550b-cb80-42c9-bf31-9bf47a5db928",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Get Access Token\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.environment.set(\"access_token\", jsonData.access_token);",
+							"});",
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Role-Base",
@@ -280,12 +265,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/user",
-							"protocol": "http",
+							"raw": "{{resource_url}}/user",
 							"host": [
-								"localhost"
+								"{{resource_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"user"
 							]
@@ -309,12 +292,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/roles/admin",
-							"protocol": "http",
+							"raw": "{{resource_url}}/roles/admin",
 							"host": [
-								"localhost"
+								"{{resource_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"roles",
 								"admin"
@@ -339,12 +320,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/roles/advertiser",
-							"protocol": "http",
+							"raw": "{{resource_url}}/roles/advertiser",
 							"host": [
-								"localhost"
+								"{{resource_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"roles",
 								"advertiser"
@@ -369,12 +348,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/roles/analyst",
-							"protocol": "http",
+							"raw": "{{resource_url}}/roles/analyst",
 							"host": [
-								"localhost"
+								"{{resource_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"roles",
 								"analyst"
@@ -383,7 +360,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Resource-Base",
@@ -404,12 +382,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/customers",
-							"protocol": "http",
+							"raw": "{{resource_url}}/customers",
 							"host": [
-								"localhost"
+								"{{resource_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"customers"
 							]
@@ -433,12 +409,10 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/customers",
-							"protocol": "http",
+							"raw": "{{resource_url}}/customers",
 							"host": [
-								"localhost"
+								"{{resource_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"customers"
 							]
@@ -462,12 +436,10 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/customers/1/reports",
-							"protocol": "http",
+							"raw": "{{resource_url}}/customers/1/reports",
 							"host": [
-								"localhost"
+								"{{resource_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"customers",
 								"1",
@@ -493,12 +465,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/campaigns",
-							"protocol": "http",
+							"raw": "{{resource_url}}/campaigns",
 							"host": [
-								"localhost"
+								"{{resource_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"campaigns"
 							]
@@ -522,12 +492,10 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/campaigns",
-							"protocol": "http",
+							"raw": "{{resource_url}}/campaigns",
 							"host": [
-								"localhost"
+								"{{resource_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"campaigns"
 							]
@@ -551,15 +519,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/service/admin",
-							"protocol": "http",
+							"raw": "{{resource_url}}/reports",
 							"host": [
-								"localhost"
+								"{{resource_url}}"
 							],
-							"port": "3000",
 							"path": [
-								"service",
-								"admin"
+								"reports"
 							]
 						}
 					},
@@ -581,12 +546,10 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/reports",
-							"protocol": "http",
+							"raw": "{{resource_url}}/reports",
 							"host": [
-								"localhost"
+								"{{resource_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"reports"
 							]
@@ -594,7 +557,9 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		}
-	]
+	],
+	"protocolProfileBehavior": {}
 }
